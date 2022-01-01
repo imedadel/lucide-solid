@@ -1,7 +1,6 @@
 import { readdir, readFile, writeFile } from "fs/promises"
 import { cwd } from "process"
 import camelcase from "camelcase"
-import { optimize } from "svgo"
 
 let staticIconsPath = cwd() + "/node_modules/lucide-static/icons"
 let solidIconsPath = cwd() + "/src/icons"
@@ -30,13 +29,8 @@ async function main() {
 			encoding: "utf-8",
 		})
 		let name = file.slice(0, file.lastIndexOf("."))
-		let optimized = optimize(content, {
-			plugins: ["preset-default"],
-		})
-		let comp = toSolid(
-			camelcase(name, { pascalCase: true }),
-			toIcon(optimized.data)
-		)
+
+		let comp = toSolid(camelcase(name, { pascalCase: true }), toIcon(content))
 
 		icons.push(
 			writeFile(`${solidIconsPath}/${name}.tsx`, comp, { encoding: "utf-8" })
